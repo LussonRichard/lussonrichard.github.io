@@ -96,7 +96,6 @@
 
       function send() {
       	console.log("salut toi");
-      	checkAuth();
       	sendMessage('me', 'toto', function() {
       		console.log('Mail sent')
       	});
@@ -257,6 +256,7 @@
 						<p></p>
 					</div>
 					<div class="container 75%">
+						<div id="authorize-div"></div>
 						<form>
 							<div class="row 50%">
 								<div class="6u 12u(mobile)"><input type="text" placeholder="Nom" /></div>
