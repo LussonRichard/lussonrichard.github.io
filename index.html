@@ -96,6 +96,7 @@
 
       function send() {
       	console.log("salut toi");
+      	checkAuth();
       	sendMessage('me', 'toto', function() {
       		console.log('Mail sent')
       	});
