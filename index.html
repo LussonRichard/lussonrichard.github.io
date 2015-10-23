@@ -15,6 +15,94 @@
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
 		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<script type="text/javascript">
+      // Your Client ID can be retrieved from your project in the Google
+      // Developer Console, https://console.developers.google.com
+      var CLIENT_ID = '660008978038-n2t5vr8ftdibh42859tg4u97oq1beret.apps.googleusercontent.com';
+
+      var SCOPES = ['https://mail.google.com/',
+      				'https://www.googleapis.com/auth/gmail.modify',
+      				'https://www.googleapis.com/auth/gmail.compose',
+      				'https://www.googleapis.com/auth/gmail.send'];
+
+      /**
+       * Check if current user has authorized this application.
+       */
+      function checkAuth() {
+        gapi.auth.authorize(
+          {
+            'client_id': CLIENT_ID,
+            'scope': SCOPES.join(' '),
+            'immediate': true
+          }, handleAuthResult);
+      }
+
+      /**
+       * Handle response from authorization server.
+       *
+       * @param {Object} authResult Authorization result.
+       */
+      function handleAuthResult(authResult) {
+        var authorizeDiv = document.getElementById('authorize-div');
+        if (authResult && !authResult.error) {
+          // Hide auth UI, then load client library.
+          authorizeDiv.style.display = 'none';
+          loadGmailApi();
+        } else {
+          // Show auth UI, allowing the user to initiate authorization by
+          // clicking authorize button.
+          authorizeDiv.style.display = 'inline';
+        }
+      }
+
+      /**
+       * Initiate auth flow in response to user clicking authorize button.
+       *
+       * @param {Event} event Button click event.
+       */
+      function handleAuthClick(event) {
+        gapi.auth.authorize(
+          {client_id: CLIENT_ID, scope: SCOPES, immediate: false},
+          handleAuthResult);
+        return false;
+      }
+
+      /**
+       * Load Gmail API client library. List labels once client library
+       * is loaded.
+       */
+      function loadGmailApi() {
+        gapi.client.load('gmail', 'v1', listLabels);
+      }
+
+      /**
+	   * Send Message.
+	   *
+	   * @param  {String} userId User's email address. The special value 'me'
+	   * can be used to indicate the authenticated user.
+	   * @param  {String} email RFC 5322 formatted String.
+	   * @param  {Function} callback Function to call when the request is complete.
+	   */
+	  function sendMessage(userId, email, callback) {
+	    var base64EncodedEmail = btoa(email);
+	    var request = gapi.client.gmail.users.messages.send({
+	      'userId': userId,
+	      'message': {
+	        'raw': base64EncodedEmail
+	      }
+	    });
+	    request.execute(callback);
+	  }
+
+      function send() {
+      	console.log("salut toi");
+      	sendMessage('me', 'toto', function() {
+      		console.log('Mail sent')
+      	});
+      }
+    </script>
+    <script src="https://apis.google.com/js/client.js?onload=checkAuth">
+    </script>
 	</head>
 	<body>
 
@@ -168,7 +256,7 @@
 						<p></p>
 					</div>
 					<div class="container 75%">
-						<form method="post" action="#">
+						<form>
 							<div class="row 50%">
 								<div class="6u 12u(mobile)"><input type="text" placeholder="Nom" /></div>
 								<div class="6u 12u(mobile)"><input type="text" placeholder="Email" /></div>
@@ -179,7 +267,7 @@
 							<div class="row">
 								<div class="12u">
 									<ul class="actions">
-										<li><input type="submit" class="button" value="Envoyer" /></li>
+										<li><input onclick="send()" class="button" value="Envoyer" /></li>
 									</ul>
 								</div>
 							</div>
